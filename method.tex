@@ -79,9 +79,38 @@ $y_i \leftarrow \gamma\hat x_i + \beta \equiv BN_{\gamma,\beta}(x_i) $  \tcp{sca
 \caption{Batch Normalization Transform applied to activation x over a mini-batch}
 \label{algo:batchnorm}
 \end{algorithm}
-
+The algorithm used in Algorithm \ref{algo:batchnorm} can be extended to normalize the entire activations rather than a single activation function.
+Thereby normalizing the entire network with the additional learning parameters $\beta$ and $\gamma$.
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\KwIn{Network N with trainable parameters $\theta$ ; subset of activations $\{ x^{(k)}\}_{k=1}^K$}
+\KwOut{Batch-Normalized network for inference, $N_{BN}^{inf}$}
+$N_{BN}^{tr} \leftarrow N$ \tcp{Training BN network}
+\For{ $k = 1\dots K$}{
+ Add transformation $y^{(k)} = BN_{\gamma^{(k)},\beta^{(k)}}{(x^{(k)})}$ to $N_{BN}^{tr}$ (Alg \ref{algo:batchnorm})\;
+ Modify each layer in $N_{BN}^{tr}$ with input $x^{(k)}$ to take $y^{(k)}$ instead\;
+}
+Train $N_{BN}^{tr}$ to optimize the parameters $\theta \cup \{ \gamma^{(k)} ,\beta^{(k)} \}_{k=1}^K$\;
+$N_{BN}^{inf} \leftarrow N_{BN}^{tr}$ \tcp{Inference BN network with frozen parameters}
+For{ $k = 1 \dots K$}{
+ \tcp{For clarity $x \equiv x^{(k)} , \gamma \equiv \gamma^{(k)} , \mu_B \equiv \mu_B^{(k)}$}
+ Process muliple training mini-batches $B$, each of size $m$, and average over them:
+ \begin{equation}
+   E[x] \leftarrow E_B[\mu_B]
+ \end{equation}
+ \begin{equation}
+   Var[x] \leftarrow \frac{m}{m-1} E_B[\sigma_B^2]
+ \end{equation}\;
+ In $N_{BN}^{inf}$, replace the transform $y = BN_{\gamma,\beta}{(x)}$ with 
+ \begin{equation}
+  y =  \frac{\gamma}{\sqrt{Var[x] + \epsilon}} x (\gamma - \frac{\gamma E[x]}{\sqrt{Var[x] + \epsilon}})
+ \end{equation}
+}
+\caption{Training a Batch-Normalized Network}
+\label{algo:batchnorm2}
+\end{algorithm} 
 \subsection{Pixel Shuffler}
-The previous works on image super-resolution using deep learning  where based on initially interpolating the low-resolution image $\textbf{I}_{LR}$ to high-resolution image by means of bicubic interpolation and the interpolated image is fed as input into the network for extracting features.Thinking from first principles, if it where possible to give the low resolution image as input the network could have learned more features within the same complexity as learning less features with the bicubically high-resolved image.
+The previous works on image super-resolution using deep learning  where based on initally interpolating the low-resolution image $\textbf{I}_{LR}$ to high-resolution image by means of bicubic interpolation and the interpolated image is fed as input into the network for extracting features.Thinking from first principles, if it where possible to give the low resolution image as input the network could have learned more features within the same complexity as learning less features with the bicubically high-resolved image.
 \begin{figure}[h!]
  \centering
  \includegraphics[scale=0.5]{pixel_shuffler}
