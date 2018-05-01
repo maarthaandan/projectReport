@@ -82,6 +82,7 @@ $y_i \leftarrow \gamma\hat x_i + \beta \equiv BN_{\gamma,\beta}(x_i) $  \tcp{sca
 The algorithm used in Algorithm \ref{algo:batchnorm} can be extended to normalize the entire activations rather than a single activation function.
 Thereby normalizing the entire network with the additional learning parameters $\beta$ and $\gamma$.
 
+
 \begin{algorithm}[H]
 \DontPrintSemicolon
 \KwIn{Network N with trainable parameters $\theta$ ; subset of activations $\{ x^{(k)}\}_{k=1}^K$}
@@ -127,6 +128,7 @@ where f is the activation function used in each layer and $W_L$ is the kernal ap
 \begin{equation}
 PS(T)_{x,y,c} = T_{\floor{\frac{x}{r}},\floor{\frac{y}{r}},C*r*mod(y,r) + C*mod(x,r)+c}
 \end{equation}
+
 where x,y,c are the co-ordinates of the upscaled image.
 \subsection{Graphics Processing Unit}
 For this project two diffrent Graphics Processing Units where used \textbf{NVIDIA Jetson TX1} and \textbf{NVIDIA QUADRO M5000}.The computational power of each device helped to advance in training the generative models in much faster pace by exploiting the fast tensor calculation mechanisms employed on the system.
